@@ -45,12 +45,12 @@ class Logger extends AbstractLogger
                 chmod($this->dir, 0755);
             }
             if (!file_exists($this->dir . '/' . $this->filename)) {
-                $this->log(0, 'Log file ' . $this->dir . '/' . $this->filename . ' not found, creating new file.');
+                $this->info('Log file ' . $this->dir . '/' . $this->filename . ' not found, creating new file.');
                 touch($this->dir . '/' . $this->filename);
                 chmod($this->dir . '/' . $this->filename, 0644);
             }
             if (filesize($this->dir . '/' . $this->filename) > 2 * 1024 * 1024) {
-                $this->log(0, 'Log file ' . $this->dir . '/' . $this->filename . ' is getting large, creating new file.');
+                $this->info('Log file ' . $this->dir . '/' . $this->filename . ' is getting large, creating new file.');
                 $i = 1;
                 $seek = true;
                 while ($seek) {
@@ -65,7 +65,7 @@ class Logger extends AbstractLogger
                 touch($this->dir . '/' . $this->filename);
                 chmod($this->dir . '/' . $this->filename, 0644);
             }
-            if (!is_writable($this->dir . '/' . $this->filename)) die($this->log(2, 'Cannot open ' . $this->dir . '/' . $this->filename . ', not writable.'));
+            if (!is_writable($this->dir . '/' . $this->filename)) die($this->error('Cannot open ' . $this->dir . '/' . $this->filename . ', not writable.'));
         }
     }
 
@@ -77,7 +77,7 @@ class Logger extends AbstractLogger
     {
         if ($this->filename && $this->dir) {
             $removed = false;
-            $this->log(0, 'Starting garbage collection.', 1);
+            $this->info('Starting garbage collection.', 1);
             $files = scandir($this->dir);
             foreach ($files as $file) {
                 if ($file !== '.' && $file !== '..') {
@@ -86,14 +86,14 @@ class Logger extends AbstractLogger
                         if (!is_dir($this->dir . '/' . $file)) {
                             $removed = true;
                             unlink($this->dir . '/' . $file);
-                            $this->log(0, 'Removing ' . $this->dir . '/' . $file . '.', 1);
+                            $this->info('Removing ' . $this->dir . '/' . $file . '.', 1);
                         }
                     }
                 }
             }
-            if (!$removed) $this->log(0, 'Nothing to delete.', 1);
+            if (!$removed) $this->info('Nothing to delete.', 1);
         } else {
-            $this->log(0, 'Skipping garbage collection...', 1);
+            $this->info('Skipping garbage collection...', 1);
         }
     }
 
@@ -106,8 +106,8 @@ class Logger extends AbstractLogger
     {
         if ($this->filename) {
             $debug_export = "[ " . date("Y-m-d H:i:s") . "] [EXPORT] " . var_export($var, true);
-            if (!$handle = fopen($this->dir . '/' . $this->filename, 'a')) die($this->log(2, 'Cannot open ' . $this->this->dir . '/' . $this->filename . ', not writable.'));
-            if (fwrite($handle, $debug_export . "\n") === FALSE) die($this->log(2, 'Cannot write to ' . $this->this->dir . '/' . $this->filename . '.'));
+            if (!$handle = fopen($this->dir . '/' . $this->filename, 'a')) die($this->error('Cannot open ' . $this->this->dir . '/' . $this->filename . ', not writable.'));
+            if (fwrite($handle, $debug_export . "\n") === FALSE) die($this->error('Cannot write to ' . $this->this->dir . '/' . $this->filename . '.'));
             fclose($handle);
         }
     }
@@ -141,8 +141,8 @@ class Logger extends AbstractLogger
             trigger_error($debug_export);
         }
         if ($this->filename) {
-            if (!$handle = fopen($this->dir . '/' . $this->filename, 'a')) die($this->log(2, 'Cannot open ' . $this->dir . '/' . $this->filename . ', not writable.'));
-            if (fwrite($handle, $debug_export) === FALSE) die($this->log(2, 'Cannot write to ' . $this->dir . '/' . $this->filename . '.'));
+            if (!$handle = fopen($this->dir . '/' . $this->filename, 'a')) die($this->error('Cannot open ' . $this->dir . '/' . $this->filename . ', not writable.'));
+            if (fwrite($handle, $debug_export) === FALSE) die($this->error('Cannot write to ' . $this->dir . '/' . $this->filename . '.'));
             fclose($handle);
         }
         if ($this->verbose) {
