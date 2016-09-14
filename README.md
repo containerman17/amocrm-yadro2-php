@@ -17,10 +17,13 @@ $yadro->updateAll();
 ```
 Вызывайте sync.php каждые 5 минут по cron'у. Он синхронизирует только данные, которые изменились с последнего вызова.
 
-## Установка через composer
+## Установка
+### Через composer
 ```
 composer require "solohin/amocrm-yadro2-php"
 ```
+### Стабильный релиз
+Доступен по ссылке https://github.com/solohin/amocrm-yadro2-php/archive/v0.1.1-stable.zip
 
 ## Автор модуля
 [Солохин Илья](https://vk.com/solohin_ilya) ([Facebook](https://www.facebook.com/solohin.i)) из команды [DATA5](http://data5.ru)
