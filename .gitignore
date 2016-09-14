@@ -1,0 +1,4 @@
+vendor/
+lock.txt
+test.php
+.idea/

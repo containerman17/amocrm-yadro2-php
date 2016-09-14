@@ -1,0 +1,27 @@
+{
+  "name": "solohin/amocrm-yadro2-php",
+  "description": "Ядро для синхронизации amoCRM с mongoDB",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "solohin",
+      "email": "solohin.i@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "psr/log": "^1.0",
+    "php": ">=5.3.0"
+  },
+  "require-dev": {
+    "leeoniya/dump-r": "^2.1",
+    "psr/log": "^1.0",
+    "php": ">=5.3.0"
+  },
+  "autoload": {
+    "classmap": [
+      "solohin/yadro",
+      "solohin"
+    ]
+  }
+}
