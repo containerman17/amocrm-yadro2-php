@@ -15,6 +15,7 @@ require_once __DIR__.'/vendor/autoload.php';
 $core = new \solohin\yadro\yadro('doffler', 'test@gmail.com', '41a17271a1f57817271a1f5194978', true);
 $yadro->updateAll();
 ```
+Вызывайте sync.php каждые 5 минут по cron'у. Он синхронизирует только данные, которые изменились с последнего вызова.
 
 ### Установка через composer
 ```
