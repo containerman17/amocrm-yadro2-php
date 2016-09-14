@@ -22,4 +22,4 @@ composer require "solohin/amocrm-yadro2-php"
 ```
 
 ### Автор модуля
-[Солохин Илья](https://vk.com/solohin_ilya) из команды [DATA5](http://data5.ru)
+[Солохин Илья](https://vk.com/solohin_ilya) ([Facebook](https://www.facebook.com/solohin.i)) из команды [DATA5](http://data5.ru)
