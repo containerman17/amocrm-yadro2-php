@@ -93,6 +93,7 @@ class AmoDigger
     private function error($message, $data)
     {
         $this->logger->error($message, $data);
+        throw new \Exception($message);
     }
 
     private function request($path, $params = [], $fromTS = 0)
