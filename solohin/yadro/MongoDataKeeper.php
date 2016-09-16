@@ -34,6 +34,12 @@ class MongoDataKeeper implements DataKeeperInterface
         'account' => []
     ];
     private $logger;
+    private $collectionsOverride = [
+        'notes_contact' => 'notes',
+        'notes_lead' => 'notes',
+        'notes_company' => 'notes',
+        'notes_task' => 'notes',
+    ];
 
     /**
      * DataKeeperInterface constructor.
@@ -85,6 +91,10 @@ class MongoDataKeeper implements DataKeeperInterface
      */
     public function upsertBatch($type, array $data)
     {
+        if(isset($this->collectionsOverride[$type])){
+            $type = $this->collectionsOverride[$type];
+        }
+
         $collection = $this->getCollection($type);
         foreach ($data as $item) {
             $collection->update(
@@ -104,8 +114,38 @@ class MongoDataKeeper implements DataKeeperInterface
      */
     public function getLastTimestamp($type)
     {
+        if (in_array($type, ['notes_contact', 'notes_lead', 'notes_task', 'notes_company'])) {
+            return $this->getLastNotesTimestamp($type);
+        }
         $collection = $this->getCollection($type);
         $cursor = $collection->find()->sort(['last_modified' => -1])->limit(1);
+        $items = array_values(iterator_to_array($cursor));
+        if (isset($items[0]['last_modified'])) {
+            return $items[0]['last_modified'];
+        } else {
+            return 0;
+        }
+    }
+
+    private function getLastNotesTimestamp($type)
+    {
+        $collection = $this->getCollection('notes');
+
+        $filter = [];
+
+        if ($type == 'notes_contact') {
+            $filter['element_type'] = ''.AmoDigger::ELEMENT_TYPE_CONTACT;
+        } elseif ($type == 'notes_lead') {
+            $filter['element_type'] = ''.AmoDigger::ELEMENT_TYPE_LEAD;
+        } elseif ($type == 'notes_task') {
+            $filter['element_type'] = ''.AmoDigger::ELEMENT_TYPE_TASK;
+        } elseif ($type == 'notes_company') {
+            $filter['element_type'] = ''.AmoDigger::ELEMENT_TYPE_COMPANY;
+        } else {
+            throw new \Exception('Тип индексов ' . $type . ' не поддерживается');
+        }
+
+        $cursor = $collection->find($filter)->sort(['last_modified' => -1])->limit(1);
         $items = array_values(iterator_to_array($cursor));
         if (isset($items[0]['last_modified'])) {
             return $items[0]['last_modified'];

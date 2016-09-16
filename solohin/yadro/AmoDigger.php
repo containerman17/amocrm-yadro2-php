@@ -16,6 +16,11 @@ class AmoDigger
     private $wailLockFile = null;
     private $credentials = [];
 
+    const ELEMENT_TYPE_CONTACT = 1;
+    const ELEMENT_TYPE_LEAD = 2;
+    const ELEMENT_TYPE_COMPANY = 3;
+    const ELEMENT_TYPE_TASK = 4;
+
     public function __construct($domain, $login, $hash, AbstractLogger $logger)
     {
         $this->logger = $logger;
@@ -30,21 +35,23 @@ class AmoDigger
 
     public function get($what, $fromTS = 0)
     {
-        if ($what === 'account') return $this->getAccount();
-        if ($what === 'notes') return $this->getNotes($fromTS);
-        if ($what === 'companies') return $this->getCompanies($fromTS);
+        if ($what === 'account') {
+            return $this->getAccount();
+        }
+        if ($what === 'companies') {
+            return $this->getCompanies($fromTS);
+        }
+        if (in_array($what, ['notes_contact', 'notes_lead', 'notes_task', 'notes_company'])) {
+            $type = str_replace('notes_', '', $what);
+            return $this->getNotes($fromTS, $type);
+        }
 
         return $this->fetch($what . '/list', $what, $fromTS);
     }
 
-    private function getNotes($fromTS)
+    private function getNotes($fromTS, $type)
     {
-        $result = [];
-        $result = array_merge($result, $this->fetch('notes/list?type=contact', 'notes', $fromTS));
-        $result = array_merge($result, $this->fetch('notes/list?type=lead', 'notes', $fromTS));
-        $result = array_merge($result, $this->fetch('notes/list?type=task', 'notes', $fromTS));
-
-        return $result;
+        return $this->fetch('notes/list?type=' . $type, 'notes', $fromTS);
     }
 
     private function getCompanies($fromTS)

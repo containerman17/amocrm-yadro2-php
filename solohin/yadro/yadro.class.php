@@ -33,7 +33,7 @@ class yadro
     {
         $this->startTimer('Total execution time');
 
-        $items = ['leads', 'contacts', 'account', 'notes', 'tasks', 'companies'];
+        $items = ['leads', 'contacts', 'account', 'notes_contact', 'notes_lead', 'notes_company', 'notes_task', 'tasks', 'companies'];
         foreach($items as $item){
             $this->update($item);
         }
