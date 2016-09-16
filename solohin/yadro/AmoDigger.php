@@ -82,7 +82,8 @@ class AmoDigger
             );
             if (isset($temp['response'][$resultKey][0])) {
                 $result = array_merge($temp['response'][$resultKey], $result);
-                if (count($temp['response'][$resultKey]) < $limit) {
+                //Перестрахуемся
+                if (count($temp['response'][$resultKey]) < (int)($limit/2)) {
                     break;
                 }
             } else {
