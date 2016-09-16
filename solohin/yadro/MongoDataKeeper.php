@@ -106,13 +106,17 @@ class MongoDataKeeper implements DataKeeperInterface
 
         $collection = $this->getCollection($type);
         foreach ($data as $item) {
-            $collection->update(
-                ['id' => $item['id']],
-                [
-                    '$set' => $item
-                ],
-                ['upsert' => true]
-            );
+            $item['id'] = ''.intval($item['id']);
+
+            if(isset($item['deleted']) && $item['deleted'] == '1'){
+                $collection->remove(['id' => $item['id']]);
+            }else{
+                $collection->update(
+                    ['id' => $item['id']],
+                    $item,
+                    ['upsert' => true]
+                );
+            }
         }
     }
 
