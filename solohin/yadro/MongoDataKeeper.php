@@ -15,24 +15,30 @@ class MongoDataKeeper implements DataKeeperInterface
 {
     /** @var MongoDB */
     private $db;
-    private $indexes = [
+    private $addIndexes = [
         'default' => [
             ['keys' => ['id' => -1], 'options' => ['unique' => true, 'background' => true]],
             ['keys' => ['date_create' => -1], 'options' => ['background' => true]],
             ['keys' => ['last_modified' => -1], 'options' => ['background' => true]],
             ['keys' => ['responsible_user_id' => 1], 'options' => ['background' => true]],
+            ['keys' => ['created_user_id' => 1], 'options' => ['background' => true]],
+        ],
+        'notes' => [
+            ['keys' => ['element_id' => 1], 'options' => ['background' => true]],
+            ['keys' => ['element_type' => 1], 'options' => ['background' => true]],
         ],
         'leads' => [
-            ['keys' => ['id' => -1], 'options' => ['unique' => true, 'background' => true]],
-            ['keys' => ['date_create' => -1], 'options' => ['background' => true]],
-            ['keys' => ['last_modified' => -1], 'options' => ['background' => true]],
-            ['keys' => ['responsible_user_id' => 1], 'options' => ['background' => true]],
-
             ['keys' => ['status_id' => 1], 'options' => ['background' => true]],
             ['keys' => ['pipeline_id' => 1], 'options' => ['background' => true]],
         ],
-        'account' => []
+        'tasks' => [
+            ['keys' => ['element_id' => 1], 'options' => ['background' => true]],
+            ['keys' => ['element_type' => 1], 'options' => ['background' => true]],
+            ['keys' => ['complete_till' => 1], 'options' => ['background' => true]],
+            ['keys' => ['status' => 1], 'options' => ['background' => true]],
+        ]
     ];
+    private $disableIndexing = ['account'];
     private $logger;
     private $collectionsOverride = [
         'notes_contact' => 'notes',
@@ -63,21 +69,24 @@ class MongoDataKeeper implements DataKeeperInterface
 
             $this->logger->warning('Collection ' . $name . ' not found. Creating a new one.');
 
-            if (isset($this->indexes[$name])) {
-                $indexes = $this->indexes[$name];
-            } else {
-                $indexes = $this->indexes['default'];
-            }
 
-            foreach ($indexes as $index) {
-                $this->db->{$name}->createIndex($index['keys'], $index['options']);
-                $this->logger->info(
-                    sprintf(
-                        'Creating indexes %s for collection %s',
-                        implode(', ', array_keys($index['keys'])),
-                        $name
-                    )
-                );
+            if (!in_array($name, $this->disableIndexing)) {
+                $indexes = $this->addIndexes['default'];
+
+                if (isset($this->addIndexes[$name])) {
+                    $indexes = array_merge($indexes, $this->addIndexes[$name]);
+                }
+
+                foreach ($indexes as $index) {
+                    $this->db->{$name}->createIndex($index['keys'], $index['options']);
+                    $this->logger->info(
+                        sprintf(
+                            'Creating indexes %s for collection %s',
+                            implode(', ', array_keys($index['keys'])),
+                            $name
+                        )
+                    );
+                }
             }
         }
         return $this->db->{$name};
@@ -91,7 +100,7 @@ class MongoDataKeeper implements DataKeeperInterface
      */
     public function upsertBatch($type, array $data)
     {
-        if(isset($this->collectionsOverride[$type])){
+        if (isset($this->collectionsOverride[$type])) {
             $type = $this->collectionsOverride[$type];
         }
 
@@ -134,13 +143,13 @@ class MongoDataKeeper implements DataKeeperInterface
         $filter = [];
 
         if ($type == 'notes_contact') {
-            $filter['element_type'] = ''.AmoDigger::ELEMENT_TYPE_CONTACT;
+            $filter['element_type'] = '' . AmoDigger::ELEMENT_TYPE_CONTACT;
         } elseif ($type == 'notes_lead') {
-            $filter['element_type'] = ''.AmoDigger::ELEMENT_TYPE_LEAD;
+            $filter['element_type'] = '' . AmoDigger::ELEMENT_TYPE_LEAD;
         } elseif ($type == 'notes_task') {
-            $filter['element_type'] = ''.AmoDigger::ELEMENT_TYPE_TASK;
+            $filter['element_type'] = '' . AmoDigger::ELEMENT_TYPE_TASK;
         } elseif ($type == 'notes_company') {
-            $filter['element_type'] = ''.AmoDigger::ELEMENT_TYPE_COMPANY;
+            $filter['element_type'] = '' . AmoDigger::ELEMENT_TYPE_COMPANY;
         } else {
             throw new \Exception('Тип индексов ' . $type . ' не поддерживается');
         }
