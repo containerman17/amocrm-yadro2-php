@@ -23,7 +23,7 @@ $core->updateAll();
 composer require "solohin/amocrm-yadro2-php"
 ```
 ### Стабильный релиз
-Доступен по ссылке https://github.com/solohin/amocrm-yadro2-php/archive/v0.1.6-stable.zip
+Доступен по ссылке https://github.com/solohin/amocrm-yadro2-php/archive/v0.1.7-stable.zip
 
 ## Автор модуля
 [Солохин Илья](https://vk.com/solohin_ilya) ([Facebook](https://www.facebook.com/solohin.i)) из команды [DATA5](http://data5.ru)
