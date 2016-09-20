@@ -131,6 +131,11 @@ class MongoDataKeeper implements DataKeeperInterface
         if (in_array($type, ['notes_contact', 'notes_lead', 'notes_task', 'notes_company'])) {
             return $this->getLastNotesTimestamp($type);
         }
+
+        if (isset($this->collectionsOverride[$type])) {
+            $type = $this->collectionsOverride[$type];
+        }
+        
         $collection = $this->getCollection($type);
         $cursor = $collection->find()->sort(['last_modified' => -1])->limit(1);
         $items = array_values(iterator_to_array($cursor));
