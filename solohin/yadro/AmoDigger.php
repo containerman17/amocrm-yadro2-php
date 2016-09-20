@@ -73,7 +73,7 @@ class AmoDigger
         while (true) {
             $params = ['limit_rows' => $limit, 'limit_offset' => $limit * $page, 'deleted' => 'Y'];
 
-            $this->logger->info('Requesting page ' . $url . ', page ' . $page);
+            $this->logger->info('Requesting ' . $url . ', page ' . $page);
 
             $temp = $this->request(
                 $url,

@@ -36,7 +36,7 @@ class MongoDataKeeper implements DataKeeperInterface
             ['keys' => ['element_type' => 1], 'options' => ['background' => true]],
             ['keys' => ['complete_till' => 1], 'options' => ['background' => true]],
             ['keys' => ['status' => 1], 'options' => ['background' => true]],
-        ]
+        ],
     ];
     private $disableIndexing = ['account'];
     private $logger;
@@ -45,6 +45,7 @@ class MongoDataKeeper implements DataKeeperInterface
         'notes_lead' => 'notes',
         'notes_company' => 'notes',
         'notes_task' => 'notes',
+        'companies' => 'company',
     ];
 
     /**
