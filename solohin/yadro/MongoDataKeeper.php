@@ -107,11 +107,11 @@ class MongoDataKeeper implements DataKeeperInterface
 
         $collection = $this->getCollection($type);
         foreach ($data as $item) {
-            $item['id'] = ''.intval($item['id']);
+            $item['id'] = '' . intval($item['id']);
 
-            if(isset($item['deleted']) && $item['deleted'] == '1'){
+            if (isset($item['deleted']) && $item['deleted'] == '1') {
                 $collection->remove(['id' => $item['id']]);
-            }else{
+            } else {
                 $collection->update(
                     ['id' => $item['id']],
                     $item,
@@ -129,18 +129,18 @@ class MongoDataKeeper implements DataKeeperInterface
     public function getLastTimestamp($type)
     {
         if (in_array($type, ['notes_contact', 'notes_lead', 'notes_task', 'notes_company'])) {
-            return $this->getLastNotesTimestamp($type);
+            return $this->getLastNotesTimestamp($type) - 1;
         }
 
         if (isset($this->collectionsOverride[$type])) {
             $type = $this->collectionsOverride[$type];
         }
-        
+
         $collection = $this->getCollection($type);
         $cursor = $collection->find()->sort(['last_modified' => -1])->limit(1);
         $items = array_values(iterator_to_array($cursor));
         if (isset($items[0]['last_modified'])) {
-            return $items[0]['last_modified'];
+            return $items[0]['last_modified'] - 1;
         } else {
             return 0;
         }
