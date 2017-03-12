@@ -83,7 +83,7 @@ class AmoDigger
             if (isset($temp['response'][$resultKey][0])) {
                 $result = array_merge($temp['response'][$resultKey], $result);
                 //Перестрахуемся
-                if (count($temp['response'][$resultKey]) < (int)($limit/2)) {
+                if (count($temp['response'][$resultKey]) < (int)($limit / 2)) {
                     break;
                 }
             } else {
@@ -91,8 +91,9 @@ class AmoDigger
             }
             $page++;
 
-            if ($page > 500) {
-                $this->logger->warning('Over 500 pages of ' . $resultKey . ' exceeded. Cut results tp 500 pages');
+            if ($page > 5000) {
+                $this->logger->warning('Over 500 pages of ' . $resultKey . ' exceeded. Cut results up to 5000 pages');
+                return [];
             }
         }
         return $result;
@@ -109,7 +110,13 @@ class AmoDigger
         $params['USER_LOGIN'] = $this->credentials['login'];
         $params['USER_HASH'] = $this->credentials['hash'];
 
-        $url = 'https://' . $this->credentials['domain'] . '.amocrm.ru/private/api/v2/json/';
+        $domain =
+            $this->credentials['domain']
+            . (mb_stripos('.amocrm') === false)
+                ? '.amocrm.ru'
+                : '';
+
+        $url = 'https://' . $domain . '/private/api/v2/json/';
         $url .= $path;
         $url .= (strpos($path, '?') === false) ? '?' : '&';
         $url .= http_build_query($params);
