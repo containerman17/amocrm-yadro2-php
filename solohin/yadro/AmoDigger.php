@@ -111,10 +111,9 @@ class AmoDigger
         $params['USER_HASH'] = $this->credentials['hash'];
 
         $domain =
-            $this->credentials['domain']
-            . (mb_stripos($this->credentials['domain'], '.amocrm') === false)
-                ? '.amocrm.ru'
-                : '';
+            (mb_stripos($this->credentials['domain'], '.amocrm') === false)
+                ? $this->credentials['domain'].'.amocrm.ru'
+                : $this->credentials['domain'];
 
         $url = 'https://' . $domain . '/private/api/v2/json/';
         $url .= $path;
