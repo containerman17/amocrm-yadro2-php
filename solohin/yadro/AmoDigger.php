@@ -112,7 +112,7 @@ class AmoDigger
 
         $domain =
             $this->credentials['domain']
-            . (mb_stripos('.amocrm') === false)
+            . (mb_stripos($this->credentials['domain'], '.amocrm') === false)
                 ? '.amocrm.ru'
                 : '';
 
